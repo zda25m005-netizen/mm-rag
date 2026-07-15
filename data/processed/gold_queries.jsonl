@@ -1,0 +1,16 @@
+{"question": "What BLEU score did the Transformer achieve on English-to-German translation?", "gold_doc": "1706.03762"}
+{"question": "How is scaled dot-product attention computed and why is the scaling factor needed?", "gold_doc": "1706.03762"}
+{"question": "What is the masked language model objective and what fraction of tokens are masked?", "gold_doc": "1810.04805"}
+{"question": "What GLUE score did BERT-Large achieve?", "gold_doc": "1810.04805"}
+{"question": "How does RAG combine parametric and non-parametric memory?", "gold_doc": "2005.11401"}
+{"question": "What index does RAG use to retrieve Wikipedia passages?", "gold_doc": "2005.11401"}
+{"question": "How does the Vision Transformer split images into patches?", "gold_doc": "2010.11929"}
+{"question": "When does ViT overtake ResNets in accuracy?", "gold_doc": "2010.11929"}
+{"question": "How does LoRA reduce the number of trainable parameters?", "gold_doc": "2106.09685"}
+{"question": "Which projection matrices does LoRA adapt in self-attention?", "gold_doc": "2106.09685"}
+{"question": "What are the three steps of the RLHF training pipeline?", "gold_doc": "2203.02155"}
+{"question": "Why is a KL penalty used during PPO fine-tuning?", "gold_doc": "2203.02155"}
+{"question": "How many tokens was LLaMA trained on and from which datasets?", "gold_doc": "2302.13971"}
+{"question": "Which model outperforms GPT-3 despite being ten times smaller?", "gold_doc": "2302.13971"}
+{"question": "How does ColPali compute relevance with the MaxSim operator?", "gold_doc": "2407.01449"}
+{"question": "What benchmark evaluates visual document retrieval across tables and infographics?", "gold_doc": "2407.01449"}

@@ -1,0 +1,30 @@
+# MM-RAG Week 1 configuration
+corpus:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  figures_dir: data/figures
+
+chunking:
+  chunk_size_tokens: 400      # target tokens per chunk
+  overlap_tokens: 80          # overlap between consecutive chunks
+  min_chunk_chars: 200        # drop tiny fragments
+
+embedding:
+  model: BAAI/bge-small-en-v1.5   # small for dev; swap to bge-base/e5-large on GPU
+  batch_size: 64
+  normalize: true
+
+index:
+  backend: qdrant_local        # local file-based Qdrant, no server needed
+  # NOTE: on network-mounted filesystems sqlite can fail; use a local-disk path.
+  path: /tmp/mmrag_qdrant
+  collection: mmrag_chunks
+
+retrieval:
+  top_k: 5
+  candidates: 50               # dense retrieve pool (reranker input later)
+
+generator:
+  provider: stub               # stub | openai  (switch when you have an API key)
+  model: gpt-4o-mini
+  max_context_chunks: 5
