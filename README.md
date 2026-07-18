@@ -1,64 +1,66 @@
-# MM-RAG — Production-Scale Multimodal RAG (Week 1)
+# MM-RAG — Production-Scale Multimodal RAG
 
-End-to-end RAG pipeline over ML papers: PDF ingestion (text + figures),
-chunking, embedding, vector search (Qdrant), and cited answer generation.
+End-to-end multimodal RAG over ML papers: PDF ingestion (text + figures),
+CLIP figure search with hybrid scoring, query routing, vector retrieval
+(Qdrant), cited answers, and an eval harness. Building toward a fine-tuned
+reranker with a novel figure-aware hard-negative method + full MLOps loop.
 
-## Week 1 status
+## Status
 
-- [x] PDF ingestion with figure extraction (PyMuPDF) — 32 figures from 8 docs
-- [x] Overlapping chunking (400 tok / 80 overlap)
-- [x] Pluggable embedders: TF-IDF+SVD (offline dev) / sentence-transformers (GPU)
+**Week 1 — core RAG (done)**
+- [x] PDF ingestion + figure extraction (PyMuPDF): 12 real arXiv papers, 331 pages, 412 figures
+- [x] Overlapping chunking (400 tok / 80 overlap) -> 758 chunks
+- [x] Pluggable embedders: TF-IDF+SVD (dev) / sentence-transformers (GPU)
 - [x] Qdrant index (local mode), cosine search
-- [x] RAG query pipeline with citations; stub generator (GPT-4o-mini pluggable)
+- [x] RAG pipeline with citations; stub generator (GPT-4o-mini pluggable)
 - [x] Eval harness: recall@k + MRR on 16 labeled queries
-- **Baseline: recall@1 0.94 · recall@3 1.0 · MRR 0.97** (toy corpus — will drop on real corpus; that's expected and fine)
+
+**Week 2 — multimodal retrieval (in progress)**
+- [x] Day 2: figure metadata — every figure linked to paper/page/caption (13% strict caption match, page-text fallback; known issue: in-order matching)
+- [x] Day 3: CLIP embeddings (clip-ViT-B-32) for all 412 figures. Finding: image-only sims are low (0.27–0.34) on scientific diagrams
+- [x] Day 4: named-vector figure index (image + caption) with hybrid search. **Hybrid fixes the architecture-diagram query: correct figure to #1 (0.58 vs 0.29)** — bounded by caption quality
+- [x] Day 5: query router — unified ask() routes figure vs text queries (6/6 correct on demo set)
+- [ ] Day 6: Streamlit demo (figure images rendered in browser)
+- [ ] Day 7: figure-retrieval eval (labeled queries, recall@k)
 
 ## Quickstart
 
 ```bash
-pip install pymupdf qdrant-client scikit-learn pyyaml matplotlib reportlab
+pip install pymupdf qdrant-client scikit-learn pyyaml matplotlib reportlab sentence-transformers
 
-# corpus: real papers (outside sandbox)          OR  sample corpus (offline dev)
-python scripts/download_arxiv.py --out data/raw  #   python scripts/make_sample_corpus.py
+python scripts/download_arxiv.py --out data/raw   # real corpus
+python scripts/run_pipeline.py build              # text: ingest -> chunk -> embed -> index
+python scripts/build_figures.py                   # figure metadata
+python scripts/embed_figures.py                   # CLIP embeddings
+python scripts/build_figure_index.py build        # figure index (image+caption vectors)
 
-python scripts/run_pipeline.py build   # ingest -> chunk -> embed -> index
-python scripts/run_pipeline.py demo    # canned questions
-python scripts/run_pipeline.py ask "How does LoRA reduce trainable parameters?"
+python scripts/ask.py "How does LoRA reduce trainable parameters?"    # text route
+python scripts/ask.py "show me the transformer architecture diagram"  # figure route
 ```
-
-## Switching to real embeddings (Colab/GPU)
-
-In `configs/config.yaml` set `embedding.model: BAAI/bge-base-en-v1.5`
-(and `pip install sentence-transformers`). The `STEmbedder` class in
-`src/mmrag/embed.py` implements the same interface as the dev embedder.
-
-## Using GPT-4o-mini as generator
-
-```bash
-pip install openai
-export OPENAI_API_KEY=sk-...
-```
-Set `generator.provider: openai` in `configs/config.yaml`.
 
 ## Layout
 
 ```
 src/mmrag/
-  ingest.py   # PDF -> page text + figure PNGs
-  chunk.py    # overlapping chunks
-  embed.py    # TfidfEmbedder (dev) / STEmbedder (GPU)
-  index.py    # Qdrant collection build + search
-  rag.py      # query pipeline, stub + OpenAI generators
-  eval.py     # recall@k, MRR
-scripts/
-  download_arxiv.py     # real corpus (run outside sandbox)
-  make_sample_corpus.py # offline dev corpus w/ real abstracts + charts
-  run_pipeline.py       # build | ask | demo
+  ingest.py        # PDF -> page text + figure PNGs
+  chunk.py         # overlapping chunks
+  embed.py         # TfidfEmbedder (dev) / STEmbedder (GPU)
+  clip_embed.py    # CLIP image+text embeddings
+  index.py         # text chunk index (Qdrant)
+  figure_index.py  # figure index: named vectors (image+caption), hybrid search
+  router.py        # unified ask() - figure vs text routing
+  rag.py           # query pipeline, stub + OpenAI generators
+  figures.py       # figure -> page/caption metadata
+  eval.py          # recall@k, MRR
+scripts/           # build | ask | demo drivers
 configs/config.yaml
 data/ raw | processed | figures
 ```
 
-## Next (Week 2)
+## Roadmap
 
-Multimodal retrieval: embed extracted figures + page images (ColPali/CLIP),
-multi-vector search, ViDoRe benchmark.
+Weeks 3–10: bge embeddings + LoRA-fine-tuned reranker (vs DocReRank-style
+baseline), LangGraph agent, GPT-4o-mini generator, **novel figure-aware
+hard-negative mining** (controlled experiment, 3–5 seeds), scale to 1M docs
+(quantized + sharded Qdrant), load testing (QPS, p99), drift detection,
+auto-retrain, canary deploys.
