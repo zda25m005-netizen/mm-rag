@@ -64,3 +64,7 @@ baseline), LangGraph agent, GPT-4o-mini generator, **novel figure-aware
 hard-negative mining** (controlled experiment, 3–5 seeds), scale to 1M docs
 (quantized + sharded Qdrant), load testing (QPS, p99), drift detection,
 auto-retrain, canary deploys.
+
+## Demo
+
+![MM-RAG demo — figure retrieval in browser](docs/demo_screenshot.png)
