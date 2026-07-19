@@ -23,6 +23,15 @@ reranker with a novel figure-aware hard-negative method + full MLOps loop.
 - [x] Day 6: FastAPI web demo - figures rendered in browser (Streamlit pivot: no py3.14 support yet)
 - [x] Day 7: figure-retrieval eval - hybrid fig R@1 0.75 vs 0.33 image-only (table below)
 
+**Week 3 — neural retrieval + fine-tuned reranker (in progress)**
+- [x] Day 1: config-driven embedders, per-model collections; TF-IDF vs bge-small A/B (tie at doc level - ceiling-bound eval, table below)
+- [ ] Day 2: chunk-level gold set (~25 paraphrased queries) + bge query prefix - an eval with headroom
+- [ ] Day 3: hard-negative mining from bge retrieval mistakes (standard miner)
+- [ ] Day 4: reranker training setup - cross-encoder + LoRA (PEFT), Colab GPU notebook
+- [ ] Day 5: train reranker v1 on mined negatives; log to W&B
+- [ ] Day 6: integrate rerank stage into pipeline (retrieve 50 -> rerank -> top 5)
+- [ ] Day 7: measure reranker lift vs dense-only on chunk-level gold set; README table
+
 ## Quickstart
 
 ```bash
