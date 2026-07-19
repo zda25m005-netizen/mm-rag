@@ -15,13 +15,13 @@ reranker with a novel figure-aware hard-negative method + full MLOps loop.
 - [x] RAG pipeline with citations; stub generator (GPT-4o-mini pluggable)
 - [x] Eval harness: recall@k + MRR on 16 labeled queries
 
-**Week 2 — multimodal retrieval (in progress)**
+**Week 2 — multimodal retrieval (done)**
 - [x] Day 2: figure metadata — every figure linked to paper/page/caption (13% strict caption match, page-text fallback; known issue: in-order matching)
 - [x] Day 3: CLIP embeddings (clip-ViT-B-32) for all 412 figures. Finding: image-only sims are low (0.27–0.34) on scientific diagrams
 - [x] Day 4: named-vector figure index (image + caption) with hybrid search. **Hybrid fixes the architecture-diagram query: correct figure to #1 (0.58 vs 0.29)** — bounded by caption quality
 - [x] Day 5: query router — unified ask() routes figure vs text queries (6/6 correct on demo set)
-- [ ] Day 6: Streamlit demo (figure images rendered in browser)
-- [ ] Day 7: figure-retrieval eval (labeled queries, recall@k)
+- [x] Day 6: FastAPI web demo - figures rendered in browser (Streamlit pivot: no py3.14 support yet)
+- [x] Day 7: figure-retrieval eval - hybrid fig R@1 0.75 vs 0.33 image-only (table below)
 
 ## Quickstart
 
