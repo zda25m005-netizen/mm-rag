@@ -1,9 +1,13 @@
-"""Week 1 driver: ingest -> chunk -> embed -> index -> query.
+"""Pipeline driver: ingest -> chunk -> embed -> index -> query.
+
+Embedder comes from configs/config.yaml (embedding.model):
+    tfidf                  -> TfidfEmbedder (offline dev)
+    BAAI/bge-small-en-v1.5 -> STEmbedder (neural, downloads once)
 
 Usage:
-    python scripts/run_pipeline.py build          # ingest + chunk + index
-    python scripts/run_pipeline.py ask "..."      # one question
-    python scripts/run_pipeline.py demo           # canned demo questions
+    python scripts/run_pipeline.py build
+    python scripts/run_pipeline.py ask "..."
+    python scripts/run_pipeline.py demo
 """
 import json, pathlib, sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
@@ -11,12 +15,28 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 import yaml
 from mmrag.ingest import ingest_dir
 from mmrag.chunk import chunk_pages
-from mmrag.embed import TfidfEmbedder
+from mmrag.embed import TfidfEmbedder, STEmbedder
 from mmrag.index import ChunkIndex
 from mmrag.rag import RagPipeline, get_generator
 
-CFG = yaml.safe_load(open(pathlib.Path(__file__).resolve().parents[1] / "configs/config.yaml"))
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+CFG = yaml.safe_load(open(ROOT / "configs/config.yaml"))
+MODEL = CFG["embedding"]["model"]
+
+
+def get_embedder(for_build: bool):
+    if MODEL == "tfidf":
+        emb = TfidfEmbedder(str(ROOT / "data/processed/tfidf_state.pkl"))
+        if not for_build:
+            emb.load()
+        return emb
+    return STEmbedder(MODEL, CFG["embedding"].get("batch_size", 32))
+
+
+def collection_name():
+    # separate collection per embedder so we can compare
+    suffix = "tfidf" if MODEL == "tfidf" else MODEL.split("/")[-1].replace(".", "_")
+    return f"{CFG['index']['collection']}_{suffix}"
 
 
 def build():
@@ -27,23 +47,24 @@ def build():
                 CFG["chunking"]["overlap_tokens"],
                 CFG["chunking"]["min_chunk_chars"])
     chunks_path = ROOT / CFG["corpus"]["processed_dir"] / "chunks.jsonl"
-    texts = [json.loads(l)["text"] for l in open(chunks_path)]
-    emb = TfidfEmbedder(str(ROOT / "data/processed/tfidf_state.pkl"))
-    emb.fit(texts)
-    idx = ChunkIndex(CFG["index"]["path"], CFG["index"]["collection"])
+    emb = get_embedder(for_build=True)
+    if MODEL == "tfidf":
+        texts = [json.loads(l)["text"] for l in open(chunks_path)]
+        emb.fit(texts)
+    idx = ChunkIndex(CFG["index"]["path"], collection_name())
     idx.build(str(chunks_path), emb)
+    print(f"built collection: {collection_name()} (model={MODEL})")
 
 
 def make_pipeline():
-    emb = TfidfEmbedder(str(ROOT / "data/processed/tfidf_state.pkl")).load()
-    idx = ChunkIndex(CFG["index"]["path"], CFG["index"]["collection"])
+    emb = get_embedder(for_build=False)
+    idx = ChunkIndex(CFG["index"]["path"], collection_name())
     gen = get_generator(CFG["generator"]["provider"], CFG["generator"]["model"])
     return RagPipeline(emb, idx, gen, top_k=CFG["retrieval"]["top_k"])
 
 
 def ask(q: str):
-    rag = make_pipeline()
-    res = rag.query(q)
+    res = make_pipeline().query(q)
     print(f"\nQ: {res['question']}\n\n{res['answer']}\n")
     print("sources:", *[f"  {s['doc_id']} p.{s['page']} (score {s['score']})"
                         for s in res["sources"]], sep="\n")
@@ -65,5 +86,4 @@ if __name__ == "__main__":
         ask(" ".join(sys.argv[2:]))
     else:
         for q in DEMO_QS:
-            ask(q)
-            print("=" * 78)
+            ask(q); print("=" * 78)

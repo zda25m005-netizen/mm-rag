@@ -82,3 +82,15 @@ slightly edges hybrid (one query at n=12), indicating CLIP ViT-B-32 image
 vectors add little signal on scientific diagrams — motivates a stronger
 visual encoder (ColPali, GPU phase) and alpha tuning. Caveats: small n,
 caption-like query phrasing biases toward caption matching.
+
+## Text retrieval: TF-IDF vs bge-small (Week 3 Day 1, doc-level, n=16)
+
+| model | R@1 | R@5 | MRR |
+|---|---|---|---|
+| TF-IDF+SVD | 0.938 | 1.000 | 0.953 |
+| bge-small-en-v1.5 | 0.938 | 0.938 | 0.938 |
+
+Effectively a tie (1-query delta): doc-level eval on 12 papers is ceiling-bound,
+and the corpus is lexically easy (rare exact terms favor TF-IDF). Neural gains
+need a harder eval: chunk-level labels + paraphrased queries (next), plus the
+bge query prefix. bge stays as default going into reranker work.
