@@ -1,0 +1,12 @@
+{"query": "transformer encoder decoder architecture diagram", "gold_doc": "1706.03762", "accept": ["1706.03762_p3_img1"]}
+{"query": "scaled dot-product and multi-head attention diagram", "gold_doc": "1706.03762", "accept": ["1706.03762_p4_img1", "1706.03762_p4_img2"]}
+{"query": "three steps of RLHF training with supervised fine-tuning and PPO", "gold_doc": "2203.02155", "accept": ["2203.02155_p3_img1", "2203.02155_p3_img3"]}
+{"query": "mixture of experts layer with router assigning tokens to experts", "gold_doc": "2401.04088", "accept": ["2401.04088_p2_img1"]}
+{"query": "language model meta-learning in-context learning during pre-training", "gold_doc": "2005.14165", "accept": ["2005.14165_p3_img1"]}
+{"query": "Mixtral performance versus Llama models on benchmarks", "gold_doc": "2401.04088", "accept": ["2401.04088_p3_img1"]}
+{"query": "aggregate performance across benchmarks as model size scales", "gold_doc": "2005.14165", "accept": ["2005.14165_p5_img1"]}
+{"query": "LoRA reparametrization with frozen weights and low-rank matrices A and B", "gold_doc": "2106.09685", "accept": ["2106.09685_p1_img1"]}
+{"query": "similarity of image patches to query token in visual retrieval", "gold_doc": "2407.01449", "accept": ["2407.01449_p22_img1"]}
+{"query": "position embedding similarity across vision transformer layers", "gold_doc": "2010.11929", "accept": ["2010.11929_p18_img1"]}
+{"query": "benchmark contamination analysis chart", "gold_doc": "2005.14165", "accept": ["2005.14165_p32_img1"]}
+{"query": "rolling buffer cache with fixed window size", "gold_doc": "2310.06825", "accept": ["2310.06825_p3_img1"]}
