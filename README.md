@@ -68,3 +68,17 @@ auto-retrain, canary deploys.
 ## Demo
 
 ![MM-RAG demo — figure retrieval in browser](docs/demo_screenshot.png)
+
+## Figure-retrieval eval (Day 7, 12 labeled queries)
+
+| mode | fig R@1 | fig R@3 | doc R@1 | fig MRR |
+|---|---|---|---|---|
+| image-only (a=1.0) | 0.333 | 0.333 | 0.500 | 0.333 |
+| hybrid (a=0.5) | **0.750** | 0.750 | 0.750 | 0.750 |
+| caption-only (a=0.0) | 0.833 | 0.833 | 0.833 | 0.833 |
+
+Findings: hybrid more than doubles figure recall vs image-only. Caption-only
+slightly edges hybrid (one query at n=12), indicating CLIP ViT-B-32 image
+vectors add little signal on scientific diagrams — motivates a stronger
+visual encoder (ColPali, GPU phase) and alpha tuning. Caveats: small n,
+caption-like query phrasing biases toward caption matching.
