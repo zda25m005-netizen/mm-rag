@@ -103,3 +103,16 @@ Effectively a tie (1-query delta): doc-level eval on 12 papers is ceiling-bound,
 and the corpus is lexically easy (rare exact terms favor TF-IDF). Neural gains
 need a harder eval: chunk-level labels + paraphrased queries (next), plus the
 bge query prefix. bge stays as default going into reranker work.
+
+## Chunk-level retrieval eval (Week 3 Day 2, bge-small, 18 paraphrased queries)
+
+Passage-level: correct = a top-k chunk is from the right paper AND contains a gold phrase.
+
+| variant | chunk R@1 | R@3 | R@5 | MRR |
+|---|---|---|---|---|
+| bge, no query prefix | 0.444 | 0.722 | 0.833 | 0.578 |
+| bge + query prefix | **0.667** | 0.778 | 0.889 | **0.738** |
+
+Two findings: (1) chunk-level eval has real headroom (unlike doc-level) — the
+yardstick for reranking. (2) The recommended bge query prefix is a free +23pts
+R@1 / +16pts MRR. This becomes the dense-retrieval baseline the reranker must beat.

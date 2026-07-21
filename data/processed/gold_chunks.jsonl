@@ -1,0 +1,18 @@
+{"query": "how does the model represent the order of tokens without using recurrence", "gold_doc": "1706.03762", "accept_phrases": ["positional encoding"]}
+{"query": "mechanism that lets the model attend to different representation subspaces simultaneously", "gold_doc": "1706.03762", "accept_phrases": ["multi-head attention", "multi-head"]}
+{"query": "why the dot products are divided by the square root of the key dimension", "gold_doc": "1706.03762", "accept_phrases": ["scaling", "sqrt", "square root"]}
+{"query": "pretraining task that predicts whether two text segments are consecutive", "gold_doc": "1810.04805", "accept_phrases": ["next sentence"]}
+{"query": "objective where random input tokens are hidden and then predicted", "gold_doc": "1810.04805", "accept_phrases": ["masked", "mask"]}
+{"query": "combining a text generator with an external searchable memory of passages", "gold_doc": "2005.11401", "accept_phrases": ["retrieval", "non-parametric"]}
+{"query": "learning a new task from a few examples placed in the prompt without gradient updates", "gold_doc": "2005.14165", "accept_phrases": ["few-shot", "in-context"]}
+{"query": "the total number of parameters in the largest model that was trained", "gold_doc": "2005.14165", "accept_phrases": ["175 billion", "175b"]}
+{"query": "splitting an image into fixed-size pieces fed as a sequence to a transformer", "gold_doc": "2010.11929", "accept_phrases": ["patches", "patch"]}
+{"query": "adapting a large model by injecting trainable rank decomposition matrices", "gold_doc": "2106.09685", "accept_phrases": ["low-rank", "rank decomposition"]}
+{"query": "keeping the pretrained weights fixed while training only small added parameters", "gold_doc": "2106.09685", "accept_phrases": ["frozen", "freeze"]}
+{"query": "training a model to score outputs according to human preference rankings", "gold_doc": "2203.02155", "accept_phrases": ["reward model"]}
+{"query": "the reinforcement learning algorithm used to optimize the policy against the reward", "gold_doc": "2203.02155", "accept_phrases": ["ppo", "proximal policy"]}
+{"query": "training strong foundation models using only publicly available datasets", "gold_doc": "2302.13971", "accept_phrases": ["publicly available"]}
+{"query": "attention pattern that restricts each token to a fixed window of nearby tokens", "gold_doc": "2310.06825", "accept_phrases": ["sliding window"]}
+{"query": "a sparse architecture that routes each token to a subset of feed-forward experts", "gold_doc": "2401.04088", "accept_phrases": ["mixture of experts", "experts"]}
+{"query": "matching query tokens against document patch embeddings with a maxsim operator", "gold_doc": "2407.01449", "accept_phrases": ["late interaction", "maxsim"]}
+{"query": "benchmark for visual document retrieval spanning tables and figures", "gold_doc": "2407.01449", "accept_phrases": ["vidore"]}
