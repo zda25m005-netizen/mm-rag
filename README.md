@@ -23,14 +23,23 @@ reranker with a novel figure-aware hard-negative method + full MLOps loop.
 - [x] Day 6: FastAPI web demo - figures rendered in browser (Streamlit pivot: no py3.14 support yet)
 - [x] Day 7: figure-retrieval eval - hybrid fig R@1 0.75 vs 0.33 image-only (table below)
 
-**Week 3 — neural retrieval + fine-tuned reranker (in progress)**
+**Week 3 — neural retrieval + fine-tuned reranker (done)**
 - [x] Day 1: config-driven embedders, per-model collections; TF-IDF vs bge-small A/B (tie at doc level - ceiling-bound eval, table below)
-- [ ] Day 2: chunk-level gold set (~25 paraphrased queries) + bge query prefix - an eval with headroom
-- [ ] Day 3: hard-negative mining from bge retrieval mistakes (standard miner)
-- [ ] Day 4: reranker training setup - cross-encoder + LoRA (PEFT), Colab GPU notebook
-- [ ] Day 5: train reranker v1 on mined negatives; log to W&B
-- [ ] Day 6: integrate rerank stage into pipeline (retrieve 50 -> rerank -> top 5)
-- [ ] Day 7: measure reranker lift vs dense-only on chunk-level gold set; README table
+- [x] Day 2: chunk-level gold set (18 paraphrased queries) + bge query prefix (+23pts R@1, free win)
+- [x] Day 3: hard-negative mining - 753 positives + 2259 negatives (known limit: false negatives)
+- [x] Day 4: reranker LoRA training notebook (Colab T4) + smoke test
+- [x] Day 5: trained reranker v1 (LoRA, 3 epochs) - val acc 0.77->0.98, 74K params (0.33%)
+- [x] Day 6: two-stage retrieval - bge retrieve 50 -> cross-encoder rerank -> top 5
+- [x] Day 7: reranker eval - cross-encoder +11pts R@1; naive-mined LoRA underperformed base (diagnosed; motivates Week-6 mining novelty)
+
+**Week 4 — LLM agent + eval harness (planned)**
+- [ ] Day 1: wire GPT-4o-mini generator (replace stub); bake bge query prefix into pipeline
+- [ ] Day 2: LangGraph agent skeleton - Observe-Think-Act loop over retrieval
+- [ ] Day 3: query decomposition - split multi-hop questions into sub-queries
+- [ ] Day 4: tool calling - code-exec to verify numeric claims from retrieved text
+- [ ] Day 5: RAGAS eval harness - faithfulness, answer-relevance, context-precision
+- [ ] Day 6: LLM-as-judge hallucination + citation-precision scoring
+- [ ] Day 7: validate judge vs ~50 human labels; report agreement rate
 
 ## Quickstart
 
