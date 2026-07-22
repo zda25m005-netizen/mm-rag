@@ -116,3 +116,20 @@ Passage-level: correct = a top-k chunk is from the right paper AND contains a go
 Two findings: (1) chunk-level eval has real headroom (unlike doc-level) — the
 yardstick for reranking. (2) The recommended bge query prefix is a free +23pts
 R@1 / +16pts MRR. This becomes the dense-retrieval baseline the reranker must beat.
+
+## Reranker eval (Week 3 Day 7, chunk-level, 18 queries)
+
+| mode | R@1 | R@3 | R@5 | MRR |
+|---|---|---|---|---|
+| dense only (bge) | 0.667 | 0.778 | 0.889 | 0.738 |
+| dense + base cross-encoder | **0.778** | **0.889** | **1.000** | **0.858** |
+| dense + LoRA v1 (ours) | 0.611 | 0.833 | 0.944 | 0.752 |
+
+**Finding (negative result, diagnosed):** the cross-encoder reranker clearly
+helps (dense+base beats dense-only everywhere). But our LoRA fine-tuning
+*underperforms the off-the-shelf model* on R@1/MRR. Root cause: the reranker
+was trained on pseudo-queries (chunk slices) with false-negative-noisy hard
+negatives — a distribution mismatch vs real queries. High training val-acc
+(0.98) did not transfer. This motivates the Week-6 contribution: better
+(figure-aware) hard-negative mining to fix the training signal. Current
+production config: dense + base cross-encoder.
