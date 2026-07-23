@@ -5,3 +5,4 @@ __pycache__/
 data/qdrant/
 data/qdrant_figures/
 notebooks/reranker_lora*/
+.env
