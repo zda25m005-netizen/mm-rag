@@ -25,6 +25,6 @@ retrieval:
   candidates: 50               # dense retrieve pool (reranker input later)
 
 generator:
-  provider: stub               # stub | openai  (switch when you have an API key)
+  provider: openai               # stub | openai  (switch when you have an API key)
   model: gpt-4o-mini
   max_context_chunks: 5

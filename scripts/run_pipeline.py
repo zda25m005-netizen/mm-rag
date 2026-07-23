@@ -60,7 +60,8 @@ def make_pipeline():
     emb = get_embedder(for_build=False)
     idx = ChunkIndex(CFG["index"]["path"], collection_name())
     gen = get_generator(CFG["generator"]["provider"], CFG["generator"]["model"])
-    return RagPipeline(emb, idx, gen, top_k=CFG["retrieval"]["top_k"])
+    prefix = "Represent this sentence for searching relevant passages: " if MODEL.startswith("BAAI/bge") else ""
+    return RagPipeline(emb, idx, gen, top_k=CFG["retrieval"]["top_k"], query_prefix=prefix)
 
 
 def ask(q: str):
