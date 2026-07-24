@@ -32,14 +32,23 @@ reranker with a novel figure-aware hard-negative method + full MLOps loop.
 - [x] Day 6: two-stage retrieval - bge retrieve 50 -> cross-encoder rerank -> top 5
 - [x] Day 7: reranker eval - cross-encoder +11pts R@1; naive-mined LoRA underperformed base (diagnosed; motivates Week-6 mining novelty)
 
-**Week 4 — LLM agent + eval harness (planned)**
-- [ ] Day 1: wire GPT-4o-mini generator (replace stub); bake bge query prefix into pipeline
-- [ ] Day 2: LangGraph agent skeleton - Observe-Think-Act loop over retrieval
-- [ ] Day 3: query decomposition - split multi-hop questions into sub-queries
-- [ ] Day 4: tool calling - code-exec to verify numeric claims from retrieved text
-- [ ] Day 5: RAGAS eval harness - faithfulness, answer-relevance, context-precision
-- [ ] Day 6: LLM-as-judge hallucination + citation-precision scoring
-- [ ] Day 7: validate judge vs ~50 human labels; report agreement rate
+**Week 4 — LLM agent + eval harness (done)**
+- [x] Day 1: GPT-4o-mini generator live + bge query prefix baked into pipeline (clean cited answers)
+- [x] Day 2: LangGraph agent (retrieve/grade/reformulate/generate). Finding: self-correction bounded by retrieval recall -> hallucinates when retrieval fails
+- [x] Day 3: query decomposition - splits multi-part questions, retrieves per sub-question, synthesizes from multiple papers
+- [x] Day 4: tool calling - safe AST calculator (no exec) verifies numeric claims when needed
+- [x] Day 5: RAGAS-style eval (LLM judge) - faithfulness/relevance/context-precision; context-precision localizes failures to retrieval recall
+- [x] Day 6: claim-level judge - citation precision 1.0; 'say if insufficient' prompt turns hallucination into honest refusal
+- [x] Day 7: validated judge vs human labels - raw agreement 0.67/kappa 0.31; disagreement analysis shows ~3/4 were human labeling errors (judge reliable; single-annotator labeling is noisy)
+
+**Week 5 — harden the core + fix retrieval recall (planned)**
+- [ ] Day 1: diagnose the retrieval-recall gap (the recurring bottleneck across Weeks 3-4)
+- [ ] Day 2: hybrid retrieval - add BM25/keyword search fused with dense (recall boost)
+- [ ] Day 3: add a coverage / answer-rate metric (catch faithful-but-unhelpful refusals)
+- [ ] Day 4: pytest unit tests for pipeline components + CI
+- [ ] Day 5: wire the agent into the FastAPI demo; Dockerize
+- [ ] Day 6: re-run full eval (retrieval + answer-quality) with hybrid retrieval
+- [ ] Day 7: freeze v1.0 core - tag release, polish README
 
 ## Quickstart
 
