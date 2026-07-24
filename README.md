@@ -142,3 +142,18 @@ negatives — a distribution mismatch vs real queries. High training val-acc
 (0.98) did not transfer. This motivates the Week-6 contribution: better
 (figure-aware) hard-negative mining to fix the training signal. Current
 production config: dense + base cross-encoder.
+
+## Answer-quality eval (Week 4 Day 5, RAGAS-style LLM judge, 6 queries)
+
+| metric | avg |
+|---|---|
+| faithfulness | 0.667 |
+| answer relevance | 0.583 |
+| context precision | 0.558 |
+
+Per-query: 4/6 score high (faithfulness ~1.0); 2/6 score ~0 — and both have
+context_precision 0.0, i.e. retrieval returned irrelevant passages. Faithfulness
+correctly flags the Day-2 hallucination ("word-order" query) at 0.0. Key finding:
+**answer quality is gated by retrieval recall** - when the right passage is
+retrieved, faithfulness is near-perfect; failures trace to retrieval, not
+generation. Motivates retrieval/mining improvements (Week 6).
