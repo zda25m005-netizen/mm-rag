@@ -17,7 +17,7 @@ embedding:
 index:
   backend: qdrant_local        # local file-based Qdrant, no server needed
   # NOTE: on network-mounted filesystems sqlite can fail; use a local-disk path.
-  path: /tmp/mmrag_qdrant
+  path: data/qdrant
   collection: mmrag_chunks
 
 retrieval:

@@ -144,3 +144,53 @@ def run_agent_decompose(question):
     trace.append("synthesize")
     return {"question": question, "subquestions": subs,
             "context": context, "answer": ans, "trace": trace}
+
+
+# ---- Day 4: tool calling (safe calculator) ----
+import ast as _ast, operator as _op
+
+_OPS = {_ast.Add: _op.add, _ast.Sub: _op.sub, _ast.Mult: _op.mul,
+        _ast.Div: _op.truediv, _ast.Pow: _op.pow, _ast.USub: _op.neg,
+        _ast.Mod: _op.mod}
+
+
+def safe_calc(expr: str):
+    """Evaluate an arithmetic expression safely (numbers + operators only)."""
+    def ev(n):
+        if isinstance(n, _ast.Constant) and isinstance(n.value, (int, float)):
+            return n.value
+        if isinstance(n, _ast.BinOp) and type(n.op) in _OPS:
+            return _OPS[type(n.op)](ev(n.left), ev(n.right))
+        if isinstance(n, _ast.UnaryOp) and type(n.op) in _OPS:
+            return _OPS[type(n.op)](ev(n.operand))
+        raise ValueError("unsafe expression")
+    return ev(_ast.parse(expr, mode="eval").body)
+
+
+def run_agent_tools(question):
+    trace = []
+    plan = _chat("If answering requires arithmetic, output ONE Python arithmetic "
+                 "expression using only digits, + - * / ** ( ) and scientific notation "
+                 "like 175e9. Otherwise output exactly NONE.\n\nQuestion: " + question,
+                 max_tokens=40, temp=0).strip()
+    tool_result = None
+    if plan.upper() != "NONE":
+        try:
+            val = safe_calc(plan)
+            tool_result = f"{plan} = {val:g}"
+            trace.append(f"tool:calc -> {tool_result}")
+        except Exception as e:
+            trace.append(f"tool:calc rejected ({e})")
+    else:
+        trace.append("tool:calc -> not needed")
+
+    hits = _retrieve_hits(question, k=5)
+    trace.append(f"retrieve -> {hits[0]['doc_id']} p.{hits[0]['page']}")
+    ctx = "\n\n".join(f"[{h['doc_id']} p.{h['page']}] {h['text'][:1000]}" for h in hits)
+    extra = f"\n\nVerified calculation (trust this over any arithmetic in context): {tool_result}" if tool_result else ""
+    ans = _chat("Answer using the context and any verified calculation. Cite [doc_id p.N]."
+                "\n\nContext:\n" + ctx + extra + "\n\nQuestion: " + question + "\n\nAnswer:",
+                max_tokens=500, temp=0.1)
+    trace.append("generate")
+    return {"question": question, "tool_result": tool_result,
+            "answer": ans, "trace": trace}
