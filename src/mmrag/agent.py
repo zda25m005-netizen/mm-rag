@@ -105,3 +105,42 @@ def run_agent(question):
     init = {"question": question, "query": question, "context": [],
             "attempts": 0, "sufficient": False, "answer": "", "trace": []}
     return app.invoke(init)
+
+
+# ---- Day 3: query decomposition ----
+def _retrieve_hits(query, k=4, pool=50):
+    rag, rr = _lazy()
+    qv = rag.embedder.encode([PREFIX + query])[0]
+    hits = rag.index.search(qv, top_k=pool)
+    scores = rr.score(query, [h["text"] for h in hits])
+    for h, s in zip(hits, scores):
+        h["_s"] = s
+    hits.sort(key=lambda h: -h["_s"])
+    return hits[:k]
+
+
+def decompose(question):
+    out = _chat("Break the question into the minimal set of standalone sub-questions "
+                "needed to answer it fully. If it is already a single simple question, "
+                "return it unchanged. One sub-question per line, no numbering.\n\n"
+                "Question: " + question, max_tokens=120, temp=0)
+    subs = [s.strip("-*0123456789. ").strip() for s in out.splitlines() if s.strip()]
+    return subs[:4] if subs else [question]
+
+
+def run_agent_decompose(question):
+    subs = decompose(question)
+    trace = [f"decompose -> {len(subs)} sub-question(s)"]
+    seen = {}
+    for sq in subs:
+        for h in _retrieve_hits(sq, k=4):
+            seen[h.get("chunk_id", h["text"][:40])] = h
+        trace.append(f"retrieve('{sq[:55]}') -> {len(seen)} unique chunks so far")
+    context = list(seen.values())[:8]
+    ctx = "\n\n".join(f"[{h['doc_id']} p.{h['page']}] {h['text'][:1000]}" for h in context)
+    ans = _chat("Answer the question using ONLY the context. Cite as [doc_id p.N]. "
+                "Address every part of the question.\n\nContext:\n" + ctx +
+                "\n\nQuestion: " + question + "\n\nAnswer:", max_tokens=600, temp=0.1)
+    trace.append("synthesize")
+    return {"question": question, "subquestions": subs,
+            "context": context, "answer": ans, "trace": trace}
